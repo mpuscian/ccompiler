@@ -1,14 +1,8 @@
 import argparse
+from pathlib import Path
 
-
-def main():
-    parser = argparse.ArgumentParser(description="Pass path to file")
-    parser.add_argument("--path", help="Path to the file")
-    args = parser.parse_args()
-    print(f"Path given: {args.path}")
-    f = open(args.path, "r")
-    print(f.read())
-
-
-if __name__ == "__main__":
-    main()
+parser = argparse.ArgumentParser()
+parser.add_argument("file_path", type=Path)
+p = parser.parse_args()
+f = open(p.file_path, "r")
+print(f.read())
