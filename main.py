@@ -1,7 +1,10 @@
 import argparse
 import os
+import re
 import subprocess
 from pathlib import Path
+
+# from lexer import *
 
 
 def main():
@@ -12,12 +15,6 @@ def main():
     parser.add_argument("--codegen", action="store_true", default=False)
 
     p = parser.parse_args()
-    if p.lex:
-        print("Place for lexer init")
-    if p.parse:
-        print("Place for parse init")
-    if p.codegen:
-        print("Place for codegen init")
     f = open(p.file_path, "r")
     print(f.name)  # prints file path
     preprocessed_file = os.path.basename(f.name)
@@ -27,6 +24,22 @@ def main():
         "gcc -E -P " + f.name + " -o " + preprocessed_file
     )  # command ran by shell
     subprocess.Popen(cmd, shell=True)
+    if p.lex:
+        tokenizing(preprocessed_file)
+    if p.parse:
+        print("Place for parse init")
+    if p.codegen:
+        print("Place for codegen init")
+    return 0
+
+
+def tokenizing(filename):
+    file = open(filename, "r")
+    single_string = file.read()  # returns file content as signle string
+    # r'' - string raw literal
+    pattern_identifier = r"[A-zA-Z_]\w*\b"
+    x = re.findall(pattern_identifier, single_string)
+    print(x)
     return 0
 
 
