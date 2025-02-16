@@ -47,6 +47,29 @@ def tokenization(filename):
     pattern_op_brace = r"{"
     pattern_clse_brace = r"}"
     patter_semicolon = r";"
+    tokens_list = []
+    for char in single_string:
+        token_identifier = re.search(pattern_identifier, char)
+        if token_identifier is not None:
+            tokens_list.append(char)
+        token_constant = re.search(pattern_constant, char)
+        if token_constant is not None:
+            tokens_list.append(char)
+        token_op_par = re.search(pattern_op_par, char)
+        if token_op_par is not None:
+            tokens_list.append(char)
+        token_clse_par = re.search(pattern_clse_par, char)
+        if token_clse_par is not None:
+            tokens_list.append(char)
+        token_op_brace = re.search(pattern_op_brace, char)
+        if token_op_brace is not None:
+            tokens_list.append(char)
+        token_cls_brace = re.search(pattern_clse_brace, char)
+        if token_cls_brace is not None:
+            tokens_list.append(char)
+        token_semicolon = re.search(patter_semicolon, char)
+        if token_semicolon is not None:
+            tokens_list.append(char)
     semicolons_found = re.findall(patter_semicolon, single_string)
     constant_found = re.findall(pattern_constant, single_string)
     identifiers_found = re.findall(pattern_identifier, single_string)
@@ -54,20 +77,27 @@ def tokenization(filename):
     voids_found = re.findall(pattern_void_keyword, single_string)
     returns_found = re.findall(pattern_return_keyword, single_string)
     op_pars_found = re.findall(pattern_op_par, single_string)
-    clse_pars_found = re.findall(pattern_clse_par, single_string)
     op_braces_found = re.findall(pattern_op_brace, single_string)
     clse_braces_found = re.findall(pattern_clse_brace, single_string)
-    print(constant_found)
-    print(identifiers_found)
-    print(ints_found)
-    print(returns_found)
-    print(voids_found)
-    print(op_pars_found)
-    print(clse_pars_found)
-    print(op_braces_found)
-    print(clse_braces_found)
-    print(semicolons_found)
+    print(tokens_list)
+    pos = find_order(tokens_list, pattern_void_keyword)
+    for x in range(pos[0] + 1, pos[1]):
+        tokens_list[pos[0]] = tokens_list[pos[0]] + tokens_list[x]
+        print(tokens_list[x])
+    tokens_list = tokens_list[: pos[0] + 1] + tokens_list[pos[1] :]
+    print(tokens_list)
+
     return 0
+
+
+def find_order(list, pattern):
+    pattern = pattern[:-2]
+    temp_string = "".join(list)
+    match = re.search(pattern, temp_string)
+    first = match.start()
+    last = match.end()
+    pos = [first, last]
+    return pos
 
 
 if __name__ == "__main__":
