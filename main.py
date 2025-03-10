@@ -1,10 +1,23 @@
 import argparse
 import os
 import re
+import string
 import subprocess
 from pathlib import Path
 
+
 # from lexer import *
+class Pattern:
+    Identifier = r"[a-zA-Z_]\w*\b"
+    Constant = r"[0-9]+\b"
+    Int_keyword = r"int\b"
+    Void_keyword = r"void\b"
+    Return_keyword = r"return\b"
+    Open_par = r"\("
+    Close_par = r"\)"
+    Open_brace = r"{"
+    Close_brace = r"}"
+    Semicolon = r";"
 
 
 def main():
@@ -35,69 +48,58 @@ def main():
 
 def tokenization(filename):
     file = open(filename, "r")
-    single_string = file.read()  # returns file content as signle string
+    single_string = file.read()  # returns file content as single string
     # r'' - string raw literal
-    pattern_identifier = r"[A-zA-Z_]\w*\b"
-    pattern_constant = r"[0-9]+\b"
-    pattern_int_keyword = r"int\b"
-    pattern_void_keyword = r"void\b"
-    pattern_return_keyword = r"return\b"
-    pattern_op_par = r"\("
-    pattern_clse_par = r"\)"
-    pattern_op_brace = r"{"
-    pattern_clse_brace = r"}"
-    patter_semicolon = r";"
-    tokens_list = []
-    for char in single_string:
-        token_identifier = re.search(pattern_identifier, char)
-        if token_identifier is not None:
-            tokens_list.append(char)
-        token_constant = re.search(pattern_constant, char)
-        if token_constant is not None:
-            tokens_list.append(char)
-        token_op_par = re.search(pattern_op_par, char)
-        if token_op_par is not None:
-            tokens_list.append(char)
-        token_clse_par = re.search(pattern_clse_par, char)
-        if token_clse_par is not None:
-            tokens_list.append(char)
-        token_op_brace = re.search(pattern_op_brace, char)
-        if token_op_brace is not None:
-            tokens_list.append(char)
-        token_cls_brace = re.search(pattern_clse_brace, char)
-        if token_cls_brace is not None:
-            tokens_list.append(char)
-        token_semicolon = re.search(patter_semicolon, char)
-        if token_semicolon is not None:
-            tokens_list.append(char)
-    semicolons_found = re.findall(patter_semicolon, single_string)
-    constant_found = re.findall(pattern_constant, single_string)
-    identifiers_found = re.findall(pattern_identifier, single_string)
-    ints_found = re.findall(pattern_int_keyword, single_string)
-    voids_found = re.findall(pattern_void_keyword, single_string)
-    returns_found = re.findall(pattern_return_keyword, single_string)
-    op_pars_found = re.findall(pattern_op_par, single_string)
-    op_braces_found = re.findall(pattern_op_brace, single_string)
-    clse_braces_found = re.findall(pattern_clse_brace, single_string)
-    print(tokens_list)
-    pos = find_order(tokens_list, pattern_void_keyword)
-    for x in range(pos[0] + 1, pos[1]):
-        tokens_list[pos[0]] = tokens_list[pos[0]] + tokens_list[x]
-        print(tokens_list[x])
-    tokens_list = tokens_list[: pos[0] + 1] + tokens_list[pos[1] :]
-    print(tokens_list)
-
-    return 0
+    counter = 0
+    tokens = []
+    string_lenght = len(single_string)
+    while counter < string_lenght:
+        char = single_string[counter]
+        while char == string.whitespace:
+            char = single_string[counter]
+            counter += 1
+        while re.search(Pattern.Identifier, char):
+            temp_identifier = ""
+            while re.search(Pattern.Identifier, char) or re.search(
+                Pattern.Constant, char
+            ):
+                temp_identifier += char
+                counter += 1
+                char = single_string[counter]
+            if (
+                re.search(Pattern.Int_keyword, temp_identifier)
+                or re.search(Pattern.Void_keyword, temp_identifier)
+                or re.search(Pattern.Return_keyword, temp_identifier)
+            ):
+                tokens.append(["keyword", temp_identifier])
+                counter += 1
+            else:
+                tokens.append(["identifier", temp_identifier])
+                counter += 1
+        if char == Pattern.Constant:
+            number = ""
+            number += char
+            counter += 1
+            char = single_string[counter + 1]
+        print(char)
+        print(tokens)
+    print(single_string)
 
 
 def find_order(list, pattern):
     pattern = pattern[:-2]
+    extracted_string = ""
+    extracted_pattern = []
     temp_string = "".join(list)
-    match = re.search(pattern, temp_string)
-    first = match.start()
-    last = match.end()
-    pos = [first, last]
-    return pos
+    match_found = re.search(pattern, temp_string)
+    token_start = match_found.start()  # pyright: ignore
+    token_end = match_found.end()  # pyright: ignore
+    pos = [token_start, token_end]
+    for x in range(token_start, token_end):
+        extracted_string += temp_string[x]
+    extracted_pattern.append(token_start)
+    extracted_pattern.append((extracted_string))
+    return extracted_pattern
 
 
 if __name__ == "__main__":
