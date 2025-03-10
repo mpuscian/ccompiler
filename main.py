@@ -72,10 +72,8 @@ def tokenization(filename):
                 or re.search(Pattern.Return_keyword, temp_identifier)
             ):
                 tokens.append(["keyword", temp_identifier])
-                counter += 1
             else:
                 tokens.append(["identifier", temp_identifier])
-                counter += 1
         if char == Pattern.Constant:
             number = ""
             number += char
@@ -83,6 +81,8 @@ def tokenization(filename):
             char = single_string[counter + 1]
         print(char)
         print(tokens)
+        counter += 1
+        print(counter)
     print(single_string)
 
 
