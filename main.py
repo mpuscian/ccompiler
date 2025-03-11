@@ -96,21 +96,5 @@ def tokenization(filename):
         print(counter)
 
 
-def find_order(list, pattern):
-    pattern = pattern[:-2]
-    extracted_string = ""
-    extracted_pattern = []
-    temp_string = "".join(list)
-    match_found = re.search(pattern, temp_string)
-    token_start = match_found.start()  # pyright: ignore
-    token_end = match_found.end()  # pyright: ignore
-    pos = [token_start, token_end]
-    for x in range(token_start, token_end):
-        extracted_string += temp_string[x]
-    extracted_pattern.append(token_start)
-    extracted_pattern.append((extracted_string))
-    return extracted_pattern
-
-
 if __name__ == "__main__":
     main()
