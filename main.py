@@ -74,16 +74,26 @@ def tokenization(filename):
                 tokens.append(["keyword", temp_identifier])
             else:
                 tokens.append(["identifier", temp_identifier])
-        if char == Pattern.Constant:
+        if re.search(Pattern.Constant, char):
             number = ""
-            number += char
-            counter += 1
-            char = single_string[counter + 1]
+            while re.search(Pattern.Constant, char):
+                number += char
+                counter += 1
+                char = single_string[counter]
+            tokens.append(["Number", number])
+        if (
+            re.search(Pattern.Open_brace, char)
+            or re.search(Pattern.Open_par, char)
+            or re.search(Pattern.Close_brace, char)
+            or re.search(Pattern.Close_par, char)
+        ):
+            other = ""
+            other += char
+            tokens.append(["Others", other])
+        counter += 1
         print(char)
         print(tokens)
-        counter += 1
         print(counter)
-    print(single_string)
 
 
 def find_order(list, pattern):
