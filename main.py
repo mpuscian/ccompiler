@@ -86,6 +86,7 @@ def tokenization(filename):
             or re.search(Pattern.Open_par, char)
             or re.search(Pattern.Close_brace, char)
             or re.search(Pattern.Close_par, char)
+            or re.search(Pattern.Semicolon, char)
         ):
             other = ""
             other += char
